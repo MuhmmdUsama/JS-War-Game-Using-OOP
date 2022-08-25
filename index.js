@@ -2,23 +2,33 @@ function Character(name, strength, health) {
   this.strength = strength;
   this.health = health;
   this.name = name;
-  // ###### Buttons
-  this.attackBtn = document.querySelector(`#${this.name}-attack`);
-  this.healthBtn = document.querySelector(`#${this.name}-health`);
-  this.healingBar = document.querySelector(`.${this.name}-heal-bar span`);
-  this.deadMsg = document.querySelector(`.${this.name}-dead-msg`);
+  this.controls = new Controls(name)
+  this.healingmsg = new HealingAndMsg(name)
 }
 
-//Attacking the enemy and affecting his health by the amount of the strength
+// ###### Buttons
+function Controls (name){
+  this.attackBtn = document.querySelector(`#${name}-attack`);
+  this.healthBtn = document.querySelector(`#${name}-health`);
+}
+
+function HealingAndMsg (name){
+  this.healingBar = document.querySelector(`.${name}-heal-bar span`);
+  this.deadMsg = document.querySelector(`.${name}-dead-msg`);
+}
+
+//Attacking the enemy and affecting his health by the amount of the strength value
 Character.prototype.attack = function (enemy) {
   if (enemy.health > 0) {
     enemy.health -= this.strength;
-    enemy.healingBar.style.width = `${enemy.health}%`;
-    console.log('enemy', enemy.health);
+    enemy.healingmsg.healingBar.style.width = `${enemy.health}%`;
+    enemy.charName = document.querySelector(`.${enemy.name}-title`)//Character name beside health status
+    .innerHTML =`${enemy.name} ${enemy.health}`
+    
     if (enemy.health == 0) {
-      enemy.attackBtn.style.display = 'none';
-      enemy.healthBtn.style.display = 'none';
-      enemy.deadMsg.textContent = 'You Lose'
+      enemy.controls.attackBtn.style.display = 'none';
+      enemy.controls.healthBtn.style.display = 'none';
+      enemy.healingmsg.deadMsg.textContent = 'You Lose'
     }
   }
 };
@@ -28,34 +38,33 @@ Character.prototype.status = function () {
   console.log(`Strength: ${this.strength}`);
   console.log(`Health: ${this.health}`);
 };
+
 //increase character health
 Character.prototype.healthMe = function () {
   if (this.health < 100) this.health += this.strength;
   if (this.health > 100) this.health = 100;
-  this.healingBar.style.width = `${this.health}%`;
+  this.healingmsg.healingBar.style.width = `${this.health}%`;
   console.log(this.name, this.health);
+  this.charName = document.querySelector(`.${this.name}-title`)
+  .innerHTML =`${this.name} ${this.health}`
 };
 
 let nartoo = new Character('nartoo', 10, 100);
 let sasuka = new Character('sasuka', 5, 100);
 
 // ########## Event-Listeners
-nartoo.attackBtn.addEventListener('click', () => {
+nartoo.controls.attackBtn.addEventListener('click', () => {
   nartoo.attack(sasuka);
 });
 
-sasuka.attackBtn.addEventListener('click', () => {
+sasuka.controls.attackBtn.addEventListener('click', () => {
   sasuka.attack(nartoo);
 });
 
-nartoo.healthBtn.addEventListener('click', () => {
+nartoo.controls.healthBtn.addEventListener('click', () => {
   nartoo.healthMe();
 });
 
-sasuka.healthBtn.addEventListener('click', () => {
+sasuka.controls.healthBtn.addEventListener('click', () => {
   sasuka.healthMe();
 });
-
-
-
-console.log('$#'.repeat(10));
