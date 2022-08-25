@@ -53,8 +53,8 @@ button{
 }
 
 .dead{
-  color: #ff0000;
-  font-size: 2rem;
+  color: #000;
+  font-size: 1.3rem;
   font-weight: 600;
   margin-top: 1rem;
 }

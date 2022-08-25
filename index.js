@@ -1,42 +1,33 @@
-function Character(name, strength, health) {
-  this.strength = strength;
-  this.health = health;
-  this.name = name;
-  this.controls = new Controls(name)
-  this.healingmsg = new HealingAndMsg(name)
-}
-
-// ###### Buttons
-function Controls (name){
-  this.attackBtn = document.querySelector(`#${name}-attack`);
-  this.healthBtn = document.querySelector(`#${name}-health`);
-}
-
-function HealingAndMsg (name){
-  this.healingBar = document.querySelector(`.${name}-heal-bar span`);
-  this.deadMsg = document.querySelector(`.${name}-dead-msg`);
-}
+import { Character } from "./modules/character.js";
 
 //Attacking the enemy and affecting his health by the amount of the strength value
 Character.prototype.attack = function (enemy) {
-  if (enemy.health > 0) {
+  if (enemy.health > 0 && !enemy.health <= 0) {
     enemy.health -= this.strength;
     enemy.healingmsg.healingBar.style.width = `${enemy.health}%`;
-    enemy.charName = document.querySelector(`.${enemy.name}-title`)//Character name beside health status
-    .innerHTML =`${enemy.name} ${enemy.health}`
     
-    if (enemy.health == 0) {
-      enemy.controls.attackBtn.style.display = 'none';
-      enemy.controls.healthBtn.style.display = 'none';
-      enemy.healingmsg.deadMsg.textContent = 'You Lose'
-    }
-  }
-};
+    if (enemy.health <= 0) {
+      enemy.health = 0;
+      enemy.controls.attackBtn.remove();
+      this.controls.attackBtn.remove();
+      enemy.controls.healthBtn.remove();
+      this.controls.healthBtn.remove();
+      enemy.healingmsg.healingBar.style.width = '0%';
 
-Character.prototype.status = function () {
-  console.log(`Name: ${this.name}`);
-  console.log(`Strength: ${this.strength}`);
-  console.log(`Health: ${this.health}`);
+      enemy.healingmsg.deadMsg.innerHTML = `LOSER!!<br> 
+      <br> Name: ${enemy.name}
+      <br> Strength: ${enemy.strength}
+      <br> Health: ${enemy.health}`
+      
+      this.healingmsg.deadMsg.innerHTML = `WINNER!!! <br>
+      <br> Name: ${this.name}
+      <br> Strength: ${this.strength}
+      <br> Health: ${this.health}`
+    }
+    enemy.charName = 
+    document.querySelector(`.${enemy.name}-title`)//Character name beside health status
+    .innerHTML =`${enemy.name} ${enemy.health}`
+  }
 };
 
 //increase character health
@@ -44,7 +35,6 @@ Character.prototype.healthMe = function () {
   if (this.health < 100) this.health += this.strength;
   if (this.health > 100) this.health = 100;
   this.healingmsg.healingBar.style.width = `${this.health}%`;
-  console.log(this.name, this.health);
   this.charName = document.querySelector(`.${this.name}-title`)
   .innerHTML =`${this.name} ${this.health}`
 };
